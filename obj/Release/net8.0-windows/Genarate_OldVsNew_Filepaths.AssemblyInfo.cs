@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Genarate_OldVsNew_Filepaths")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+25a9aea01222da11527173f98e8980f9fbe9d817")]
 [assembly: System.Reflection.AssemblyProductAttribute("Genarate_OldVsNew_Filepaths")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Genarate_OldVsNew_Filepaths")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

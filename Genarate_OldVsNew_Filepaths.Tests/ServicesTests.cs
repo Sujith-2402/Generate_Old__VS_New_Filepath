@@ -130,4 +130,49 @@ public class ServicesTests
 
         Directory.Delete(tempDir, true);
     }
+
+    [Fact]
+    public async Task DataSourceFilter_FiltersRowsCorrectly()
+    {
+        string tempDir = Path.Combine(Path.GetTempPath(), "FilepathFilterTest_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDir);
+
+        string inputFile = Path.Combine(tempDir, "input_filter.csv");
+        string csv = "OldPath,ItemName,Revision,FileName,Extension,DataSource\n" +
+            "D:\\Path1,ITEM1,0,ITEM1,SLDPRT,SW-SolidWorks\n" +
+            "D:\\Path2,ITEM2,0,ITEM2,SLDPRT,OT-OpenText\n" +
+            "D:\\Path3,ITEM3,0,ITEM3,SLDPRT,SW-SolidWorks\n";
+        await File.WriteAllTextAsync(inputFile, csv);
+
+        var config = new AppConfig
+        {
+            OutputFileName = "Filtered_Output.txt",
+            Delimiter = "|",
+            CustomBasePath = @"I:\Data\SW",
+            DataSourceFilter = "SW-SolidWorks",
+            Columns = new ColumnMapping
+            {
+                OldPathColumn = "OldPath",
+                ItemFolderColumn = "ItemName",
+                RevisionColumn = "Revision",
+                FileNameColumn = "FileName",
+                ExtensionColumn = "Extension",
+                DataSourceColumn = "DataSource"
+            }
+        };
+
+        var logger = new LoggerService();
+        logger.Initialize(inputFile);
+        var processor = new Services.Genarate_OldVsNew_Filepaths();
+
+        int count = await processor.ProcessAsync(inputFile, config, logger, new Progress<string>(_ => { }), CancellationToken.None);
+
+        Assert.Equal(2, count);
+        string[] outputLines = await File.ReadAllLinesAsync(Path.Combine(tempDir, "Filtered_Output.txt"));
+        Assert.Equal(2, outputLines.Length);
+        Assert.Contains("ITEM1", outputLines[0]);
+        Assert.Contains("ITEM3", outputLines[1]);
+
+        Directory.Delete(tempDir, true);
+    }
 }

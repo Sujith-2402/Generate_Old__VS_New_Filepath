@@ -27,6 +27,7 @@ public class LoggerService
         sb.AppendLine($"  Output File: {config.OutputFileName}");
         sb.AppendLine($"  Custom Base: {config.CustomBasePath}");
         sb.AppendLine($"  Delimiter  : {config.Delimiter}");
+        sb.AppendLine($"  DataSource : {config.DataSourceFilter ?? "None (All Rows)"}");
         sb.AppendLine("================================================================================");
         AppendRaw(sb.ToString());
     }

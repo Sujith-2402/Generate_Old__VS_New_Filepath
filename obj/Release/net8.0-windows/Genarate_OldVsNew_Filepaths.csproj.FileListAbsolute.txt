@@ -16,3 +16,4 @@ C:\Project\Genarate_OldVsNew_Filepaths\obj\Release\net8.0-windows\refint\Genarat
 C:\Project\Genarate_OldVsNew_Filepaths\obj\Release\net8.0-windows\Genarate_OldVsNew_Filepaths.pdb
 C:\Project\Genarate_OldVsNew_Filepaths\obj\Release\net8.0-windows\Genarate_OldVsNew_Filepaths.genruntimeconfig.cache
 C:\Project\Genarate_OldVsNew_Filepaths\obj\Release\net8.0-windows\ref\Genarate_OldVsNew_Filepaths.dll
+C:\Project\Genarate_OldVsNew_Filepaths\obj\Release\net8.0-windows\Genarate_OldVsNew_Filepaths.sourcelink.json

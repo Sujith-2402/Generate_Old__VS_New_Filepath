@@ -18,8 +18,8 @@ public class Genarate_OldVsNew_Filepaths
         logger.LogHeader(inputExcelPath, config);
         string outPath = GetOutputPath(inputExcelPath, config.OutputFileName);
         var table = _excelReader.ReadExcelToDataTable(inputExcelPath, config.ExcelSheetName);
-        ValidateColumnsExist(table, config.Columns);
-        logger.LogInfo($"Input loaded: {table.Rows.Count} rows found. Writing to: {outPath}");
+        ValidateColumnsExist(table, config);
+        logger.LogInfo($"Loaded {table.Rows.Count} rows. Filter: '{config.DataSourceFilter ?? "All"}'. Output: {outPath}");
 
         var (written, skipped) = await WriteOutputFileAsync(table, config, outPath, progress, ct);
         logger.LogSummary(table.Rows.Count, written, skipped, sw.Elapsed, "SUCCESS");
@@ -52,6 +52,8 @@ public class Genarate_OldVsNew_Filepaths
 
     private string? ProcessRow(DataRow row, AppConfig config)
     {
+        if (!MatchesDataSource(row, config)) return null;
+
         string oldPath = GetColVal(row, config.Columns.OldPathColumn);
         string item = GetColVal(row, config.Columns.ItemFolderColumn);
         string rev = GetColVal(row, config.Columns.RevisionColumn);
@@ -63,16 +65,27 @@ public class Genarate_OldVsNew_Filepaths
         return _pathBuilder.BuildOutputLine(oldPath, newPath, config.Delimiter);
     }
 
-    private string GetColVal(DataRow row, string colName) =>
-        row[colName]?.ToString()?.Trim() ?? string.Empty;
-
-    private void ValidateColumnsExist(DataTable table, ColumnMapping cols)
+    private bool MatchesDataSource(DataRow row, AppConfig config)
     {
+        if (string.IsNullOrWhiteSpace(config.DataSourceFilter)) return true;
+        string colName = config.Columns.DataSourceColumn ?? "DataSource";
+        string actualVal = GetColVal(row, colName);
+        return string.Equals(actualVal, config.DataSourceFilter.Trim(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    private string GetColVal(DataRow row, string colName) =>
+        row.Table.Columns.Contains(colName) ? row[colName]?.ToString()?.Trim() ?? string.Empty : string.Empty;
+
+    private void ValidateColumnsExist(DataTable table, AppConfig config)
+    {
+        var cols = config.Columns;
         string[] required = [cols.OldPathColumn, cols.ItemFolderColumn, cols.RevisionColumn, cols.FileNameColumn, cols.ExtensionColumn];
         foreach (var col in required)
         {
             if (!table.Columns.Contains(col))
                 throw new InvalidOperationException($"Required column '{col}' not found in input file.");
         }
+        if (!string.IsNullOrWhiteSpace(config.DataSourceFilter) && !table.Columns.Contains(cols.DataSourceColumn ?? "DataSource"))
+            throw new InvalidOperationException($"DataSource column '{cols.DataSourceColumn}' not found for filtering.");
     }
 }

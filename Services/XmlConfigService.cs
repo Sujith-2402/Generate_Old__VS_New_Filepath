@@ -25,6 +25,7 @@ public class XmlConfigService
             Delimiter = GetVal(root, "Delimiter", "|"),
             CustomBasePath = GetVal(root, "CustomBasePath", string.Empty),
             ExcelSheetName = GetValOrNull(root, "ExcelSheetName"),
+            DataSourceFilter = GetValOrNull(root, "DataSourceFilter"),
             Columns = ParseColumns(root.Element("Columns"))
         };
     }
@@ -38,7 +39,8 @@ public class XmlConfigService
             ItemFolderColumn = GetVal(elem, "ItemFolderColumn", "ItemName"),
             RevisionColumn = GetVal(elem, "RevisionColumn", "Revision"),
             FileNameColumn = GetVal(elem, "FileNameColumn", "FileName"),
-            ExtensionColumn = GetVal(elem, "ExtensionColumn", "Extension")
+            ExtensionColumn = GetVal(elem, "ExtensionColumn", "Extension"),
+            DataSourceColumn = GetVal(elem, "DataSourceColumn", "DataSource")
         };
     }
 

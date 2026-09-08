@@ -12,6 +12,9 @@
   <!-- Optional Excel sheet name. Leave empty to use the first sheet -->
   <ExcelSheetName></ExcelSheetName>
 
+  <!-- Filter by DataSource (e.g. SW-SolidWorks, OT-OpenText). Leave empty to include all -->
+  <DataSourceFilter>SW-SolidWorks</DataSourceFilter>
+
   <!-- Column names to read from the input Excel / CSV file -->
   <Columns>
     <OldPathColumn>OldPath</OldPathColumn>
@@ -19,5 +22,7 @@
     <RevisionColumn>Revision</RevisionColumn>
     <FileNameColumn>FileName</FileNameColumn>
     <ExtensionColumn>Extension</ExtensionColumn>
+    <!-- Column name for DataSource filtering -->
+    <DataSourceColumn>DataSource</DataSourceColumn>
   </Columns>
 </Configuration>

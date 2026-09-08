@@ -1,3 +1,4 @@
-OldPath,ItemName,Revision,FileName,Extension
-"D:\PLM TeamcenterX\DEV\R1_SolidWorks\Cryo-Machinery\04-4-3111\000002265-001 cartoon.SLDPRT",ITEM_1000002,0,ITEM_1000002,SLDPRT
-"D:\PLM TeamcenterX\DEV\R1_SolidWorks\Cryo-Machinery\04-4-3112\000002266-001 assembly.SLDASM",ITEM_1000003,A,ITEM_1000003,SLDASM
+OldPath,ItemName,Revision,FileName,Extension,DataSource
+"D:\PLM TeamcenterX\DEV\R1_SolidWorks\Cryo-Machinery\04-4-3111\000002265-001 cartoon.SLDPRT",ITEM_1000002,0,ITEM_1000002,SLDPRT,SW-SolidWorks
+"D:\PLM TeamcenterX\DEV\R1_SolidWorks\Cryo-Machinery\04-4-3112\000002266-001 assembly.SLDASM",ITEM_1000003,A,ITEM_1000003,SLDASM,OT-OpenText
+"D:\PLM TeamcenterX\DEV\R1_SolidWorks\Cryo-Machinery\04-4-3113\000002267-001 part.SLDPRT",ITEM_1000004,B,ITEM_1000004,SLDPRT,SW-SolidWorks

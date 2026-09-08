@@ -6,6 +6,7 @@ public class AppConfig
     public string Delimiter { get; set; } = "|";
     public string CustomBasePath { get; set; } = string.Empty;
     public string? ExcelSheetName { get; set; }
+    public string? DataSourceFilter { get; set; }
     public ColumnMapping Columns { get; set; } = new ColumnMapping();
 }
 
@@ -16,4 +17,5 @@ public class ColumnMapping
     public string RevisionColumn { get; set; } = "Revision";
     public string FileNameColumn { get; set; } = "FileName";
     public string ExtensionColumn { get; set; } = "Extension";
+    public string? DataSourceColumn { get; set; }
 }

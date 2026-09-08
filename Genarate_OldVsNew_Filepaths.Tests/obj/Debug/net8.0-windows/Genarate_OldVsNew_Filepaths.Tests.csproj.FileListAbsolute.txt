@@ -103,3 +103,4 @@ C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\obj\Deb
 C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\obj\Debug\net8.0-windows\Genarate_OldVsNew_Filepaths.Tests.pdb
 C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\obj\Debug\net8.0-windows\Genarate_OldVsNew_Filepaths.Tests.genruntimeconfig.cache
 C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\obj\Debug\net8.0-windows\ref\Genarate_OldVsNew_Filepaths.Tests.dll
+C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\obj\Debug\net8.0-windows\Genarate_OldVsNew_Filepaths.Tests.sourcelink.json

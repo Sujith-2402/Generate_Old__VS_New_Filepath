@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <!-- Name of the output text file generated in the input folder -->
+  <OutputFileName>OldVsNew_Filepaths_Output.txt</OutputFileName>
+
+  <!-- Delimiter separating Old Path and New Path (e.g. | or , or tab) -->
+  <Delimiter>|</Delimiter>
+
+  <!-- Custom base destination directory -->
+  <CustomBasePath>I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW</CustomBasePath>
+
+  <!-- Optional Excel sheet name. Leave empty to use the first sheet -->
+  <ExcelSheetName></ExcelSheetName>
+
+  <!-- Column names to read from the input Excel / CSV file -->
+  <Columns>
+    <OldPathColumn>OldPath</OldPathColumn>
+    <ItemFolderColumn>ItemName</ItemFolderColumn>
+    <RevisionColumn>Revision</RevisionColumn>
+    <FileNameColumn>FileName</FileNameColumn>
+    <ExtensionColumn>Extension</ExtensionColumn>
+  </Columns>
+</Configuration>

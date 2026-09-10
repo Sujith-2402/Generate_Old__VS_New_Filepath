@@ -1,0 +1,16 @@
+﻿================================================================================
+  PROCESS LOG: Genarate_OldVsNew_Filepaths
+  Start Time : 2026-09-10 13:02:05
+  Input File : C:\Project\Genarate_OldVsNew_Filepaths\Sample_Input.xlsx
+  Output File: OldVsNew_Filepaths_Output.txt
+  Custom Base: I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW
+  Delimiter  : |
+  DataSource : SW-SolidWorks, CREO-PTC
+================================================================================
+[2026-09-10 13:02:05.409] [INFO ] Loaded 10 rows. Filter: 'SW-SolidWorks, CREO-PTC'. Output: C:\Project\Genarate_OldVsNew_Filepaths\OldVsNew_Filepaths_Output.txt
+================================================================================
+  EXECUTION SUMMARY: SUCCESS
+  Total Input Rows: 10 | Output Written: 6 | Skipped: 4
+  Elapsed Time    : 0.29s (00:00:00.2934724)
+  End Time        : 2026-09-10 13:02:05
+================================================================================

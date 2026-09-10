@@ -1,0 +1,29 @@
+﻿================================================================================
+  PROCESS LOG: Genarate_OldVsNew_Filepaths
+  Start Time : 2026-09-10 13:17:06
+  Input File : C:\Project\Genarate_OldVsNew_Filepaths\Sample_Input.xlsx
+  Output File: Output.txt
+  Target Base: I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW
+  Delimiter  : |
+  DataSource : SW-SolidWorks, CREO-PTC
+================================================================================
+[2026-09-10 13:17:06.493] [INFO   ] Loaded 10 rows. Filter: 'SW-SolidWorks, CREO-PTC'. Output: C:\Project\Genarate_OldVsNew_Filepaths\Output.txt
+[2026-09-10 13:17:06.498] [SUCCESS] [Row 2] SUCCESS: D:\PLM TeamcenterX\DEV\R1_SolidWorks\Cryo-Machinery\04-4-3111\000002265-001 cartoon.SLDPRT|I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW\ITEM_1000002\0\ITEM_1000002.SLDPRT
+[2026-09-10 13:17:06.500] [SKIPPED] [Row 3] SKIPPED: DataSource 'OT-OpenText' does not match filter 'SW-SolidWorks, CREO-PTC'
+[2026-09-10 13:17:06.501] [SUCCESS] [Row 4] SUCCESS: D:\PLM TeamcenterX\DEV\R1_SolidWorks\Cryo-Machinery\04-4-3113\000002267-001 part.SLDPRT|I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW\ITEM_1000004\B\ITEM_1000004.SLDPRT
+[2026-09-10 13:17:06.501] [SKIPPED] [Row 5] SKIPPED: DataSource 'ACAD-AutoCAD' does not match filter 'SW-SolidWorks, CREO-PTC'
+[2026-09-10 13:17:06.502] [SUCCESS] [Row 6] SUCCESS: D:\PLM TeamcenterX\DEV\R3_Creo\Engines\04-6-2001\000004200-001 piston.prt|I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW\ITEM_3000001\A\ITEM_3000001.prt
+[2026-09-10 13:17:06.503] [SUCCESS] [Row 7] SUCCESS: D:\PLM TeamcenterX\DEV\R1_SolidWorks\Cryo-Machinery\04-4-3114\000002268-001 valve.SLDPRT|I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW\ITEM_1000005\0\ITEM_1000005.SLDPRT
+[2026-09-10 13:17:06.504] [SKIPPED] [Row 8] SKIPPED: DataSource 'INV-Inventor' does not match filter 'SW-SolidWorks, CREO-PTC'
+[2026-09-10 13:17:06.504] [SUCCESS] [Row 9] SUCCESS: D:\PLM TeamcenterX\DEV\R3_Creo\Engines\04-6-2002\000004201-001 cylinder.prt|I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW\ITEM_3000002\B\ITEM_3000002.prt
+[2026-09-10 13:17:06.505] [SUCCESS] [Row 10] SUCCESS: D:\PLM TeamcenterX\DEV\R1_SolidWorks\Cryo-Machinery\04-4-3115\000002269-001 pipe.SLDPRT|I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW\ITEM_1000006\A\ITEM_1000006.SLDPRT
+[2026-09-10 13:17:06.506] [SKIPPED] [Row 11] SKIPPED: DataSource 'ACAD-AutoCAD' does not match filter 'SW-SolidWorks, CREO-PTC'
+================================================================================
+  EXECUTION SUMMARY: SUCCESS
+  Total Input Rows : 10
+  Success (Written): 6
+  Failed (Missing) : 0
+  Skipped (Filter) : 4
+  Elapsed Time     : 0.04s (00:00:00.0371939)
+  End Time         : 2026-09-10 13:17:06
+================================================================================

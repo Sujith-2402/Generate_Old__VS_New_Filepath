@@ -1,28 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration>
   <!-- Name of the output text file generated in the input folder -->
-  <OutputFileName>OldVsNew_Filepaths_Output.txt</OutputFileName>
-
-  <!-- Delimiter separating Old Path and New Path (e.g. | or , or tab) -->
-  <Delimiter>|</Delimiter>
-
-  <!-- Custom base destination directory -->
-  <CustomBasePath>I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW</CustomBasePath>
+  <OutputFileName>Output.txt</OutputFileName>
 
   <!-- Optional Excel sheet name. Leave empty to use the first sheet -->
   <ExcelSheetName></ExcelSheetName>
 
-  <!-- Filter by DataSource (e.g. SW-SolidWorks, OT-OpenText). Leave empty to include all -->
-  <DataSourceFilter>SW-SolidWorks</DataSourceFilter>
-
-  <!-- Column names to read from the input Excel / CSV file -->
+  <!-- Column names and path delimiters to read from the input Excel / CSV file -->
   <Columns>
-    <OldPathColumn>OldPath</OldPathColumn>
+    <!-- Source / Old file path column (or OldPathColumn) -->
+    <SourcePathColumn>OldPath</SourcePathColumn>
+    <!-- Delimiter separating Old Path and New Path in the output text file (e.g. | or , or tab) -->
+    <Delimiter>|</Delimiter>
+
+    <!-- Target destination root folder and delimiter after it -->
+    <TargetRootFolder>I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW</TargetRootFolder>
+    <Delimeter>\</Delimeter>
+
+    <!-- Item folder column and delimiter after it -->
     <ItemFolderColumn>ItemName</ItemFolderColumn>
+    <Delimeter>\</Delimeter>
+
+    <!-- (Optional) Add any extra folder columns here with their delimiters, for example: -->
+    <!--
+    <ProjectFolderColumn>ProjectCode</ProjectFolderColumn>
+    <Delimeter>\</Delimeter>
+    -->
+
+    <!-- Revision column and delimiter after it -->
     <RevisionColumn>Revision</RevisionColumn>
-    <FileNameColumn>FileName</FileNameColumn>
-    <ExtensionColumn>Extension</ExtensionColumn>
-    <!-- Column name for DataSource filtering -->
+    <Delimeter>\</Delimeter>
+
+    <!-- OPTION A: Separate FileName and Extension columns -->
+    <FileNameWithoutExtension>
+      <FileNameColumn>FileName</FileNameColumn>
+      <Delimeter>.</Delimeter>
+      <ExtensionColumn>Extension</ExtensionColumn>
+    </FileNameWithoutExtension>
+
+    <!-- OPTION B: Single column containing FileName with extension (Uncomment to use instead of Option A) -->
+    <!--
+    <FileNameWithExtension>
+      <FileNameColumn>FileName</FileNameColumn>
+    </FileNameWithExtension>
+    -->
+
+    <!-- Column name for DataSource filtering and filter values -->
     <DataSourceColumn>DataSource</DataSourceColumn>
+    <!-- Filter by DataSource (e.g. SW-SolidWorks, OT-OpenText, ACAD-AutoCAD). Separate multiple values with commas or semicolons. Leave empty to include all -->
+    <DataSourceFilter>ACAD-AutoCAD,SW-SolidWorks</DataSourceFilter>
   </Columns>
 </Configuration>

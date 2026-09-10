@@ -1,0 +1,25 @@
+﻿================================================================================
+  PROCESS LOG: Genarate_OldVsNew_Filepaths
+  Start Time : 2026-09-10 13:26:22
+  Input File : C:\Project\Genarate_OldVsNew_Filepaths\SampleRun\Sample_Input_With_Errors.csv
+  Output File: Output_Mapping.txt
+  Target Base: I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW
+  Delimiter  : |
+  DataSource : SW-SolidWorks
+================================================================================
+[2026-09-10 13:26:22.712] [INFO   ] Loaded 6 rows. Filter: 'SW-SolidWorks'. Output: C:\Project\Genarate_OldVsNew_Filepaths\SampleRun\Output_Mapping.txt
+[2026-09-10 13:26:22.713] [SUCCESS] [Row 2] SUCCESS: D:\Source\cryo_pump.sldprt|I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW\ITEM_1001\0\cryo_pump.sldprt | Row Data: [OldPath='D:\Source\cryo_pump.sldprt', ItemName='ITEM_1001', Revision='0', FileName='cryo_pump', Extension='sldprt', DataSource='SW-SolidWorks']
+[2026-09-10 13:26:22.714] [SUCCESS] [Row 3] SUCCESS: D:\Source\assembly_housing.sldasm|I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW\ITEM_1002\A\assembly_housing.sldasm | Row Data: [OldPath='D:\Source\assembly_housing.sldasm', ItemName='ITEM_1002', Revision='A', FileName='assembly_housing', Extension='sldasm', DataSource='SW-SolidWorks']
+[2026-09-10 13:26:22.715] [FAILED ] [Row 4] FAILED: Missing or blank value in column(s): Revision | Row Data: [OldPath='D:\Source\corrupted_file.sldprt', ItemName='ITEM_1003', Revision='', FileName='corrupted_file', Extension='sldprt', DataSource='SW-SolidWorks']
+[2026-09-10 13:26:22.715] [FAILED ] [Row 5] FAILED: Missing or blank value in column(s): OldPath | Row Data: [OldPath='', ItemName='ITEM_1004', Revision='B', FileName='valve_body', Extension='sldprt', DataSource='SW-SolidWorks']
+[2026-09-10 13:26:22.716] [FAILED ] [Row 6] FAILED: Missing or blank value in column(s): FileName | Row Data: [OldPath='D:\Source\missing_name.sldprt', ItemName='ITEM_1005', Revision='0', FileName='', Extension='sldprt', DataSource='SW-SolidWorks']
+[2026-09-10 13:26:22.716] [SKIPPED] [Row 7] SKIPPED: DataSource 'ACAD-AutoCAD' does not match filter 'SW-SolidWorks' | Row Data: [OldPath='D:\Source\autocad_schematic.dwg', ItemName='ITEM_2001', Revision='01', FileName='autocad_schematic', Extension='dwg', DataSource='ACAD-AutoCAD']
+================================================================================
+  EXECUTION SUMMARY: COMPLETED WITH ERRORS
+  Total Input Rows : 6
+  Success (Written): 2
+  Failed (Missing) : 3
+  Skipped (Filter) : 1
+  Elapsed Time     : 0.01s (00:00:00.0059626)
+  End Time         : 2026-09-10 13:26:22
+================================================================================

@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Genarate_OldVsNew_Filepaths.Models;
 using Genarate_OldVsNew_Filepaths.Services;
 
 namespace Genarate_OldVsNew_Filepaths.UI;
@@ -7,7 +6,6 @@ namespace Genarate_OldVsNew_Filepaths.UI;
 public partial class MainForm : Form
 {
     private readonly XmlConfigService _xmlConfig = new();
-    private readonly ConfigService _jsonConfig = new();
     private readonly Services.Genarate_OldVsNew_Filepaths _processor = new();
     private readonly LoggerService _logger = new();
     private CancellationTokenSource? _cts;
@@ -21,7 +19,7 @@ public partial class MainForm : Form
         BrowseFile("Input Files (*.xlsx;*.xls;*.csv)|*.xlsx;*.xls;*.csv|Excel Files (*.xlsx;*.xls)|*.xlsx;*.xls|CSV Files (*.csv)|*.csv|All Files (*.*)|*.*", txtInputFile);
 
     private void BtnBrowseConfig_Click(object? sender, EventArgs e) =>
-        BrowseFile("XML Files (*.xml)|*.xml|JSON Files (*.json)|*.json|All Files (*.*)|*.*", txtConfigFile);
+        BrowseFile("XML Files (*.xml)|*.xml|All Files (*.*)|*.*", txtConfigFile);
 
     private async void BtnStart_Click(object? sender, EventArgs e)
     {
@@ -32,7 +30,7 @@ public partial class MainForm : Form
         {
             _logger.Initialize(txtInputFile.Text);
             btnViewLogs.Enabled = true;
-            var config = LoadConfiguration(txtConfigFile.Text);
+            var config = _xmlConfig.LoadConfig(txtConfigFile.Text);
             var progress = new Progress<string>(msg => lblStatus.Text = msg);
             int count = await _processor.ProcessAsync(txtInputFile.Text, config, _logger, progress, _cts.Token);
             lblStatus.Text = $"Done! {count} lines written.";
@@ -53,13 +51,6 @@ public partial class MainForm : Form
         {
             SetUiState(false);
         }
-    }
-
-    private AppConfig LoadConfiguration(string path)
-    {
-        return Path.GetExtension(path).Equals(".json", StringComparison.OrdinalIgnoreCase)
-            ? _jsonConfig.LoadConfig(path)
-            : _xmlConfig.LoadConfig(path);
     }
 
     private void BtnCancel_Click(object? sender, EventArgs e)

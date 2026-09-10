@@ -7,6 +7,8 @@ public class LoggerService
 {
     private readonly object _lock = new();
     public string CurrentLogFilePath { get; private set; } = string.Empty;
+    public string SuccessLogFilePath { get; private set; } = string.Empty;
+    public string FailedLogFilePath { get; private set; } = string.Empty;
 
     public void Initialize(string inputFilePath)
     {
@@ -15,6 +17,8 @@ public class LoggerService
         Directory.CreateDirectory(logsDir);
         string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
         CurrentLogFilePath = Path.Combine(logsDir, $"Log_{timestamp}.txt");
+        SuccessLogFilePath = Path.Combine(logsDir, $"Success_Log_{timestamp}.txt");
+        FailedLogFilePath = Path.Combine(logsDir, $"Failed_Log_{timestamp}.txt");
     }
 
     public void LogHeader(string inputFile, AppConfig config)
@@ -25,43 +29,94 @@ public class LoggerService
         sb.AppendLine($"  Start Time : {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
         sb.AppendLine($"  Input File : {inputFile}");
         sb.AppendLine($"  Output File: {config.OutputFileName}");
-        sb.AppendLine($"  Custom Base: {config.CustomBasePath}");
+        sb.AppendLine($"  Target Base: {config.TargetRootFolder}");
         sb.AppendLine($"  Delimiter  : {config.Delimiter}");
         sb.AppendLine($"  DataSource : {config.DataSourceFilter ?? "None (All Rows)"}");
         sb.AppendLine("================================================================================");
-        AppendRaw(sb.ToString());
+        AppendRaw(CurrentLogFilePath, sb.ToString());
+
+        var sbSuccess = new StringBuilder();
+        sbSuccess.AppendLine("================================================================================");
+        sbSuccess.AppendLine("  SUCCESS LOG: Genarate_OldVsNew_Filepaths");
+        sbSuccess.AppendLine($"  Start Time : {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+        sbSuccess.AppendLine($"  Input File : {inputFile}");
+        sbSuccess.AppendLine($"  Output File: {config.OutputFileName}");
+        sbSuccess.AppendLine("================================================================================");
+        AppendRaw(SuccessLogFilePath, sbSuccess.ToString());
+
+        var sbFailed = new StringBuilder();
+        sbFailed.AppendLine("================================================================================");
+        sbFailed.AppendLine("  FAILED LOG: Genarate_OldVsNew_Filepaths");
+        sbFailed.AppendLine($"  Start Time : {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+        sbFailed.AppendLine($"  Input File : {inputFile}");
+        sbFailed.AppendLine("================================================================================");
+        AppendRaw(FailedLogFilePath, sbFailed.ToString());
     }
 
-    public void LogInfo(string message) => WriteEntry("INFO", message);
-    public void LogWarning(string message) => WriteEntry("WARN", message);
+    public void LogInfo(string message) => WriteEntry(CurrentLogFilePath, "INFO", message);
+    public void LogWarning(string message) => WriteEntry(CurrentLogFilePath, "WARN", message);
 
     public void LogError(string message, Exception? ex = null)
     {
         string detail = ex == null ? message : $"{message} | Details: {ex.Message}";
-        WriteEntry("ERROR", detail);
+        WriteEntry(CurrentLogFilePath, "ERROR", detail);
     }
 
-    public void LogSummary(int total, int written, int skipped, TimeSpan duration, string status)
+    public void LogSuccess(int rowNumber, string outputLine, string rowData = "")
+    {
+        string dataPart = string.IsNullOrWhiteSpace(rowData) ? string.Empty : $" | Row Data: {rowData}";
+        string message = $"[Row {rowNumber}] SUCCESS: {outputLine}{dataPart}";
+        WriteEntry(CurrentLogFilePath, "SUCCESS", message);
+        AppendRaw(SuccessLogFilePath, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [Row {rowNumber}] SUCCESS: {outputLine}{dataPart}{Environment.NewLine}");
+    }
+
+    public void LogFailed(int rowNumber, string reason, string rowData = "")
+    {
+        string dataPart = string.IsNullOrWhiteSpace(rowData) ? string.Empty : $" | Row Data: {rowData}";
+        string message = $"[Row {rowNumber}] FAILED: {reason}{dataPart}";
+        WriteEntry(CurrentLogFilePath, "FAILED", message);
+        AppendRaw(FailedLogFilePath, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [Row {rowNumber}] FAILED: {reason}{dataPart}{Environment.NewLine}");
+    }
+
+    public void LogSkipped(int rowNumber, string reason, string rowData = "")
+    {
+        string dataPart = string.IsNullOrWhiteSpace(rowData) ? string.Empty : $" | Row Data: {rowData}";
+        string message = $"[Row {rowNumber}] SKIPPED: {reason}{dataPart}";
+        WriteEntry(CurrentLogFilePath, "SKIPPED", message);
+    }
+
+    public void LogSummary(int total, int written, int failed, int skipped, TimeSpan duration, string status)
     {
         var sb = new StringBuilder();
         sb.AppendLine("================================================================================");
         sb.AppendLine($"  EXECUTION SUMMARY: {status}");
-        sb.AppendLine($"  Total Input Rows: {total} | Output Written: {written} | Skipped: {skipped}");
-        sb.AppendLine($"  Elapsed Time    : {duration.TotalSeconds:F2}s ({duration})");
-        sb.AppendLine($"  End Time        : {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+        sb.AppendLine($"  Total Input Rows : {total}");
+        sb.AppendLine($"  Success (Written): {written}");
+        sb.AppendLine($"  Failed (Missing) : {failed}");
+        sb.AppendLine($"  Skipped (Filter) : {skipped}");
+        sb.AppendLine($"  Elapsed Time     : {duration.TotalSeconds:F2}s ({duration})");
+        sb.AppendLine($"  End Time         : {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
         sb.AppendLine("================================================================================");
-        AppendRaw(sb.ToString());
+        string summaryText = sb.ToString();
+        AppendRaw(CurrentLogFilePath, summaryText);
+        AppendRaw(SuccessLogFilePath, summaryText);
+        AppendRaw(FailedLogFilePath, summaryText);
     }
 
-    private void WriteEntry(string level, string message)
+    public void LogSummary(int total, int written, int skipped, TimeSpan duration, string status)
     {
-        string line = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] [{level,-5}] {message}";
-        AppendRaw(line + Environment.NewLine);
+        LogSummary(total, written, 0, skipped, duration, status);
     }
 
-    private void AppendRaw(string text)
+    private void WriteEntry(string filePath, string level, string message)
     {
-        if (string.IsNullOrEmpty(CurrentLogFilePath)) return;
-        lock (_lock) { File.AppendAllText(CurrentLogFilePath, text, Encoding.UTF8); }
+        string line = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] [{level,-7}] {message}";
+        AppendRaw(filePath, line + Environment.NewLine);
+    }
+
+    private void AppendRaw(string filePath, string text)
+    {
+        if (string.IsNullOrEmpty(filePath)) return;
+        lock (_lock) { File.AppendAllText(filePath, text, Encoding.UTF8); }
     }
 }

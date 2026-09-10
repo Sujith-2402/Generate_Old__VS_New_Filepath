@@ -1,12 +1,52 @@
+using System.Text;
+using Genarate_OldVsNew_Filepaths.Models;
+
 namespace Genarate_OldVsNew_Filepaths.Services;
 
 public class PathBuilderService
 {
-    public string BuildNewPath(string basePath, string itemFolder, string revision, string fileName, string extension)
+    public string BuildPathFromSegments(
+        string targetRootFolder,
+        IReadOnlyList<(string value, string trailingDelimiter)> segments,
+        string baseToFirstDelimiter,
+        string fileName,
+        string? extension = null,
+        string extensionDelimiter = ".")
     {
-        string formattedExt = FormatExtension(extension);
-        string fileWithExt = $"{fileName}{formattedExt}";
-        return CombineCustomPath(basePath, itemFolder, revision, fileWithExt);
+        string normalizedBase = targetRootFolder.TrimEnd('\\', '/');
+        var sb = new StringBuilder(normalizedBase);
+        string lastDelimiter = baseToFirstDelimiter;
+
+        foreach (var (value, trailingDelimiter) in segments)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                sb.Append(lastDelimiter);
+                sb.Append(value);
+                lastDelimiter = trailingDelimiter;
+            }
+        }
+
+        string fileWithExt = BuildFileNameWithExtension(fileName, extension, extensionDelimiter);
+        if (!string.IsNullOrWhiteSpace(fileWithExt))
+        {
+            sb.Append(lastDelimiter);
+            sb.Append(fileWithExt);
+        }
+
+        return sb.ToString();
+    }
+
+    public string BuildNewPath(string basePath, string itemFolder, string revision, string fileName, string? extension = null, PathDelimiters? delimiters = null)
+    {
+        delimiters ??= new PathDelimiters();
+        var segments = new List<(string value, string trailingDelimiter)>();
+        if (!string.IsNullOrWhiteSpace(itemFolder))
+            segments.Add((itemFolder, delimiters.ItemToRevision));
+        if (!string.IsNullOrWhiteSpace(revision))
+            segments.Add((revision, delimiters.RevisionToFile));
+
+        return BuildPathFromSegments(basePath, segments, delimiters.BaseToItem, fileName, extension, delimiters.FileToExtension);
     }
 
     public string BuildOutputLine(string oldPath, string newPath, string delimiter)
@@ -14,16 +54,16 @@ public class PathBuilderService
         return $"{oldPath}{delimiter}{newPath}";
     }
 
-    private string FormatExtension(string extension)
+    private string BuildFileNameWithExtension(string fileName, string? extension, string extDelimiter)
     {
-        if (string.IsNullOrWhiteSpace(extension)) return string.Empty;
-        string trimmed = extension.Trim();
-        return trimmed.StartsWith('.') ? trimmed : $".{trimmed}";
-    }
+        if (string.IsNullOrWhiteSpace(extension)) return fileName;
 
-    private string CombineCustomPath(string basePath, string item, string rev, string fileWithExt)
-    {
-        string normalizedBase = basePath.TrimEnd('\\', '/');
-        return $@"{normalizedBase}\{item}\{rev}\{fileWithExt}";
+        string trimmedExt = extension.Trim();
+        if (!string.IsNullOrEmpty(extDelimiter) && trimmedExt.StartsWith(extDelimiter))
+            return $"{fileName}{trimmedExt}";
+        if (extDelimiter == "." && trimmedExt.StartsWith('.'))
+            return $"{fileName}{trimmedExt}";
+
+        return $"{fileName}{extDelimiter}{trimmedExt}";
     }
 }

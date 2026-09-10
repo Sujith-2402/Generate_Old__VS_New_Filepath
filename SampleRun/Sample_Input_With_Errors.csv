@@ -1,0 +1,7 @@
+OldPath,ItemName,Revision,FileName,Extension,DataSource
+D:\Source\cryo_pump.sldprt,ITEM_1001,0,cryo_pump,sldprt,SW-SolidWorks
+D:\Source\assembly_housing.sldasm,ITEM_1002,A,assembly_housing,sldasm,SW-SolidWorks
+D:\Source\corrupted_file.sldprt,ITEM_1003,,corrupted_file,sldprt,SW-SolidWorks
+,ITEM_1004,B,valve_body,sldprt,SW-SolidWorks
+D:\Source\missing_name.sldprt,ITEM_1005,0,,sldprt,SW-SolidWorks
+D:\Source\autocad_schematic.dwg,ITEM_2001,01,autocad_schematic,dwg,ACAD-AutoCAD

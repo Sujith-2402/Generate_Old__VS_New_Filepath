@@ -1,0 +1,21 @@
+<?xml version="1.0 encoding=utf-8?>
+<Configuration>
+ <OutputFileName>Output_Mapping.txt</OutputFileName>
+ <Columns>
+ <SourcePathColumn>OldPath</SourcePathColumn>
+ <Delimiter>|</Delimiter>
+ <TargetRootFolder>I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW</TargetRootFolder>
+ <Delimeter>\</Delimeter>
+ <ItemFolderColumn>ItemName</ItemFolderColumn>
+ <Delimeter>\</Delimeter>
+ <RevisionColumn>Revision</RevisionColumn>
+ <Delimeter>\</Delimeter>
+ <FileNameWithoutExtension>
+ <FileNameColumn>FileName</FileNameColumn>
+ <Delimeter>.</Delimeter>
+ <ExtensionColumn>Extension</ExtensionColumn>
+ </FileNameWithoutExtension>
+ <DataSourceColumn>DataSource</DataSourceColumn>
+ <DataSourceFilter>SW-SolidWorks</DataSourceFilter>
+ </Columns>
+</Configuration>

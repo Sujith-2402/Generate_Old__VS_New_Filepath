@@ -2,3 +2,10 @@ OldPath,ItemName,Revision,FileName,Extension,DataSource
 "D:\PLM TeamcenterX\DEV\R1_SolidWorks\Cryo-Machinery\04-4-3111\000002265-001 cartoon.SLDPRT",ITEM_1000002,0,ITEM_1000002,SLDPRT,SW-SolidWorks
 "D:\PLM TeamcenterX\DEV\R1_SolidWorks\Cryo-Machinery\04-4-3112\000002266-001 assembly.SLDASM",ITEM_1000003,A,ITEM_1000003,SLDASM,OT-OpenText
 "D:\PLM TeamcenterX\DEV\R1_SolidWorks\Cryo-Machinery\04-4-3113\000002267-001 part.SLDPRT",ITEM_1000004,B,ITEM_1000004,SLDPRT,SW-SolidWorks
+"D:\PLM TeamcenterX\DEV\R2_AutoCAD\Architectural\04-5-1001\000003100-001 layout.dwg",ITEM_2000001,01,ITEM_2000001,dwg,ACAD-AutoCAD
+"D:\PLM TeamcenterX\DEV\R3_Creo\Engines\04-6-2001\000004200-001 piston.prt",ITEM_3000001,A,ITEM_3000001,prt,CREO-PTC
+"D:\PLM TeamcenterX\DEV\R1_SolidWorks\Cryo-Machinery\04-4-3114\000002268-001 valve.SLDPRT",ITEM_1000005,0,ITEM_1000005,SLDPRT,SW-SolidWorks
+"D:\PLM TeamcenterX\DEV\R4_Inventor\Pumps\04-7-3001\000005300-001 impeller.iam",ITEM_4000001,C,ITEM_4000001,iam,INV-Inventor
+"D:\PLM TeamcenterX\DEV\R3_Creo\Engines\04-6-2002\000004201-001 cylinder.prt",ITEM_3000002,B,ITEM_3000002,prt,CREO-PTC
+"D:\PLM TeamcenterX\DEV\R1_SolidWorks\Cryo-Machinery\04-4-3115\000002269-001 pipe.SLDPRT",ITEM_1000006,A,ITEM_1000006,SLDPRT,SW-SolidWorks
+"D:\PLM TeamcenterX\DEV\R2_AutoCAD\Architectural\04-5-1002\000003101-001 electrical.dwg",ITEM_2000002,02,ITEM_2000002,dwg,ACAD-AutoCAD

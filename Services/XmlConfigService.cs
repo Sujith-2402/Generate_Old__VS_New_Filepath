@@ -34,9 +34,14 @@ public class XmlConfigService
         if (string.IsNullOrWhiteSpace(outputDelim))
             outputDelim = GetVal(root, "Delimiter", GetVal(root, "Delimeter", "|"));
 
+        string? updatedInputFileName = GetValOrNull(root, "UpdatedInputFileName") ??
+                                       GetValOrNull(root, "OutputUpdatedFileName") ??
+                                       GetValOrNull(root, "UpdatedFileName");
+
         return new AppConfig
         {
             OutputFileName = GetVal(root, "OutputFileName", "OldVsNew_Filepaths_Output.txt"),
+            UpdatedInputFileName = updatedInputFileName,
             Delimiter = outputDelim,
             CustomBasePath = basePath,
             ExcelSheetName = GetValOrNull(root, "ExcelSheetName"),
@@ -58,6 +63,12 @@ public class XmlConfigService
         mapping.ItemFolderColumn = GetVal(elem, "ItemFolderColumn", "ItemName");
         mapping.RevisionColumn = GetVal(elem, "RevisionColumn", "Revision");
         mapping.DataSourceColumn = GetVal(elem, "DataSourceColumn", GetVal(root, "DataSourceColumn", "DataSource"));
+
+        mapping.NewFilePathColumn = GetVal(elem, "NewFilePathColumn", GetVal(elem, "NewFilePathColumnName", GetVal(root, "NewFilePathColumn", "NewFilePath")));
+        mapping.InsertAfterColumn = GetValOrNull(elem, "InsertAfterColumn") ??
+                                    GetValOrNull(elem, "InsertAfter") ??
+                                    GetValOrNull(root, "InsertAfterColumn") ??
+                                    GetValOrNull(root, "InsertAfter");
 
         var withExtElem = elem?.Element("FileNameWithExtension");
         var withoutExtElem = elem?.Element("FileNameWithoutExtension");
@@ -146,7 +157,11 @@ public class XmlConfigService
                         !tag.Equals("FileNameColumn", StringComparison.OrdinalIgnoreCase) &&
                         !tag.Equals("ExtensionColumn", StringComparison.OrdinalIgnoreCase) &&
                         !tag.Equals("DataSourceColumn", StringComparison.OrdinalIgnoreCase) &&
-                        !tag.Equals("DataSourceFilter", StringComparison.OrdinalIgnoreCase))
+                        !tag.Equals("DataSourceFilter", StringComparison.OrdinalIgnoreCase) &&
+                        !tag.Equals("NewFilePathColumn", StringComparison.OrdinalIgnoreCase) &&
+                        !tag.Equals("NewFilePathColumnName", StringComparison.OrdinalIgnoreCase) &&
+                        !tag.Equals("InsertAfterColumn", StringComparison.OrdinalIgnoreCase) &&
+                        !tag.Equals("InsertAfter", StringComparison.OrdinalIgnoreCase))
                     {
                         string colVal = child.Value?.Trim() ?? string.Empty;
                         if (!string.IsNullOrWhiteSpace(colVal))

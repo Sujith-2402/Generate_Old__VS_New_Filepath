@@ -104,3 +104,11 @@ C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\obj\Deb
 C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\obj\Debug\net8.0-windows\Genarate_OldVsNew_Filepaths.Tests.genruntimeconfig.cache
 C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\obj\Debug\net8.0-windows\ref\Genarate_OldVsNew_Filepaths.Tests.dll
 C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\obj\Debug\net8.0-windows\Genarate_OldVsNew_Filepaths.Tests.sourcelink.json
+C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\bin\Debug\net8.0-windows\ClosedXML.dll
+C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\bin\Debug\net8.0-windows\ClosedXML.Parser.dll
+C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\bin\Debug\net8.0-windows\DocumentFormat.OpenXml.dll
+C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\bin\Debug\net8.0-windows\DocumentFormat.OpenXml.Framework.dll
+C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\bin\Debug\net8.0-windows\ExcelNumberFormat.dll
+C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\bin\Debug\net8.0-windows\RBush.dll
+C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\bin\Debug\net8.0-windows\SixLabors.Fonts.dll
+C:\Project\Genarate_OldVsNew_Filepaths\Genarate_OldVsNew_Filepaths.Tests\bin\Debug\net8.0-windows\System.IO.Packaging.dll

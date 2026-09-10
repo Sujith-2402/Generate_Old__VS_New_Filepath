@@ -3,6 +3,7 @@ namespace Genarate_OldVsNew_Filepaths.Models;
 public class AppConfig
 {
     public string OutputFileName { get; set; } = "OldVsNew_Filepaths_Output.txt";
+    public string? UpdatedInputFileName { get; set; }
     public string Delimiter { get; set; } = "|";
     public string CustomBasePath { get; set; } = string.Empty;
     public string TargetRootFolder
@@ -36,6 +37,8 @@ public class ColumnMapping
     public string? ExtensionColumn { get; set; } = "Extension";
     public bool HasSeparateExtension { get; set; } = true;
     public string? DataSourceColumn { get; set; }
+    public string NewFilePathColumn { get; set; } = "NewFilePath";
+    public string? InsertAfterColumn { get; set; }
     public PathDelimiters Delimiters { get; set; } = new();
 
     /// <summary>

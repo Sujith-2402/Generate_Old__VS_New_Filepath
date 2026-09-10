@@ -1,0 +1,17 @@
+﻿================================================================================
+  SUCCESS LOG: Genarate_OldVsNew_Filepaths
+  Start Time : 2026-09-10 15:39:53
+  Input File : C:\Project\Genarate_OldVsNew_Filepaths\SampleRun\Sample_Input_With_Errors.csv
+  Output File: Output_Mapping.txt
+================================================================================
+[2026-09-10 15:39:53] [Row 2] SUCCESS: D:\Source\cryo_pump.sldprt|I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW\ITEM_1001\0\cryo_pump.sldprt | Row Data: [OldPath='D:\Source\cryo_pump.sldprt', ItemName='ITEM_1001', Revision='0', FileName='cryo_pump', Extension='sldprt', DataSource='SW-SolidWorks']
+[2026-09-10 15:39:53] [Row 3] SUCCESS: D:\Source\assembly_housing.sldasm|I:\PROLIM_DM\20260504\2_T\01_02_SW_OT_Combined\Data\SW\ITEM_1002\A\assembly_housing.sldasm | Row Data: [OldPath='D:\Source\assembly_housing.sldasm', ItemName='ITEM_1002', Revision='A', FileName='assembly_housing', Extension='sldasm', DataSource='SW-SolidWorks']
+================================================================================
+  EXECUTION SUMMARY: COMPLETED WITH ERRORS
+  Total Input Rows : 6
+  Success (Written): 2
+  Failed (Missing) : 3
+  Skipped (Filter) : 1
+  Elapsed Time     : 0.01s (00:00:00.0134720)
+  End Time         : 2026-09-10 15:39:53
+================================================================================

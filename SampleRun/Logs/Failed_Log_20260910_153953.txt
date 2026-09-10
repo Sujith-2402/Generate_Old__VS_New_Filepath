@@ -1,0 +1,17 @@
+﻿================================================================================
+  FAILED LOG: Genarate_OldVsNew_Filepaths
+  Start Time : 2026-09-10 15:39:53
+  Input File : C:\Project\Genarate_OldVsNew_Filepaths\SampleRun\Sample_Input_With_Errors.csv
+================================================================================
+[2026-09-10 15:39:53] [Row 4] FAILED: Missing or blank value in column(s): Revision | Row Data: [OldPath='D:\Source\corrupted_file.sldprt', ItemName='ITEM_1003', Revision='', FileName='corrupted_file', Extension='sldprt', DataSource='SW-SolidWorks']
+[2026-09-10 15:39:53] [Row 5] FAILED: Missing or blank value in column(s): OldPath | Row Data: [OldPath='', ItemName='ITEM_1004', Revision='B', FileName='valve_body', Extension='sldprt', DataSource='SW-SolidWorks']
+[2026-09-10 15:39:53] [Row 6] FAILED: Missing or blank value in column(s): FileName | Row Data: [OldPath='D:\Source\missing_name.sldprt', ItemName='ITEM_1005', Revision='0', FileName='', Extension='sldprt', DataSource='SW-SolidWorks']
+================================================================================
+  EXECUTION SUMMARY: COMPLETED WITH ERRORS
+  Total Input Rows : 6
+  Success (Written): 2
+  Failed (Missing) : 3
+  Skipped (Filter) : 1
+  Elapsed Time     : 0.01s (00:00:00.0134720)
+  End Time         : 2026-09-10 15:39:53
+================================================================================

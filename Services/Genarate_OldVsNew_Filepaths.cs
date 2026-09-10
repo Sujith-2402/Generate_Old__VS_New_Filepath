@@ -9,19 +9,34 @@ public class Genarate_OldVsNew_Filepaths
 {
     private readonly ExcelReaderService _excelReader = new();
     private readonly PathBuilderService _pathBuilder = new();
+    private readonly TableExportService _tableExporter = new();
 
     public async Task<int> ProcessAsync(
         string inputExcelPath, AppConfig config, LoggerService logger,
         IProgress<string> progress, CancellationToken ct)
     {
         var sw = Stopwatch.StartNew();
-        logger.LogHeader(inputExcelPath, config);
+        string updatedOutPath = GetUpdatedInputFilePath(inputExcelPath, config.UpdatedInputFileName);
+        logger.LogHeader(inputExcelPath, config, updatedOutPath);
         string outPath = GetOutputPath(inputExcelPath, config.OutputFileName);
         var table = _excelReader.ReadExcelToDataTable(inputExcelPath, config.ExcelSheetName);
         ValidateColumnsExist(table, config);
         logger.LogInfo($"Loaded {table.Rows.Count} rows. Filter: '{config.DataSourceFilter ?? "All"}'. Output: {outPath}");
 
-        var (success, failed, skipped) = await WriteOutputFileAsync(table, config, outPath, logger, progress, ct);
+        var rowToNewPathMap = new Dictionary<int, string>();
+        var (success, failed, skipped) = await WriteOutputFileAsync(table, config, outPath, rowToNewPathMap, logger, progress, ct);
+
+        // Export updated duplicate of input file with NewFilePath column
+        _tableExporter.ExportUpdatedFile(
+            table,
+            rowToNewPathMap,
+            config.Columns.NewFilePathColumn,
+            config.Columns.InsertAfterColumn,
+            updatedOutPath,
+            config.ExcelSheetName);
+
+        logger.LogInfo($"Updated input file generated: {updatedOutPath} (Column '{config.Columns.NewFilePathColumn}' placed after '{config.Columns.InsertAfterColumn ?? "(End)"}')");
+
         string status = failed == 0 ? "SUCCESS" : "COMPLETED WITH ERRORS";
         logger.LogSummary(table.Rows.Count, success, failed, skipped, sw.Elapsed, status);
         return success;
@@ -33,8 +48,27 @@ public class Genarate_OldVsNew_Filepaths
         return Path.Combine(dir, fileName);
     }
 
+    public string GetUpdatedInputFilePath(string inputExcelPath, string? customUpdatedFileName)
+    {
+        string dir = Path.GetDirectoryName(inputExcelPath) ?? AppDomain.CurrentDomain.BaseDirectory;
+        if (!string.IsNullOrWhiteSpace(customUpdatedFileName))
+        {
+            return Path.Combine(dir, customUpdatedFileName);
+        }
+
+        string nameNoExt = Path.GetFileNameWithoutExtension(inputExcelPath);
+        string ext = Path.GetExtension(inputExcelPath);
+        if (ext.Equals(".xls", StringComparison.OrdinalIgnoreCase))
+        {
+            ext = ".xlsx";
+        }
+        return Path.Combine(dir, $"{nameNoExt}_Updated{ext}");
+    }
+
     private async Task<(int success, int failed, int skipped)> WriteOutputFileAsync(
-        DataTable table, AppConfig config, string outPath, LoggerService logger,
+        DataTable table, AppConfig config, string outPath,
+        Dictionary<int, string> rowToNewPathMap,
+        LoggerService logger,
         IProgress<string> progress, CancellationToken ct)
     {
         var allowedDataSources = GetAllowedDataSources(config.DataSourceFilter);
@@ -51,21 +85,24 @@ public class Genarate_OldVsNew_Filepaths
             if (!MatchesDataSource(row, config, allowedDataSources))
             {
                 skipped++;
+                rowToNewPathMap[i] = string.Empty;
                 string dsVal = GetColVal(row, config.Columns.DataSourceColumn ?? "DataSource");
                 logger.LogSkipped(rowNumber, $"DataSource '{dsVal}' does not match filter '{config.DataSourceFilter}'", rowData);
                 continue;
             }
 
-            var (isValid, line, reason) = ProcessRow(row, config);
-            if (isValid && line != null)
+            var (isValid, line, newPath, reason) = ProcessRow(row, config);
+            if (isValid && line != null && newPath != null)
             {
                 await writer.WriteLineAsync(line.AsMemory(), ct);
+                rowToNewPathMap[i] = newPath;
                 success++;
                 logger.LogSuccess(rowNumber, line, rowData);
             }
             else
             {
                 failed++;
+                rowToNewPathMap[i] = string.Empty;
                 logger.LogFailed(rowNumber, reason ?? "Missing or invalid row data", rowData);
             }
 
@@ -82,7 +119,7 @@ public class Genarate_OldVsNew_Filepaths
         return $"[{string.Join(", ", cols)}]";
     }
 
-    private (bool isValid, string? line, string? reason) ProcessRow(DataRow row, AppConfig config)
+    private (bool isValid, string? line, string? newPath, string? reason) ProcessRow(DataRow row, AppConfig config)
     {
         var missingCols = new List<string>();
 
@@ -129,7 +166,7 @@ public class Genarate_OldVsNew_Filepaths
 
         if (missingCols.Count > 0)
         {
-            return (false, null, $"Missing or blank value in column(s): {string.Join(", ", missingCols.Distinct())}");
+            return (false, null, null, $"Missing or blank value in column(s): {string.Join(", ", missingCols.Distinct())}");
         }
 
         string newPath;
@@ -155,7 +192,7 @@ public class Genarate_OldVsNew_Filepaths
         }
 
         string outputLine = _pathBuilder.BuildOutputLine(oldPath, newPath, config.Delimiter);
-        return (true, outputLine, null);
+        return (true, outputLine, newPath, null);
     }
 
     private bool MatchesDataSource(DataRow row, AppConfig config, HashSet<string>? allowedDataSources)

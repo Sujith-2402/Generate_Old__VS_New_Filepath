@@ -1,3 +1,4 @@
+using System.Data;
 using Genarate_OldVsNew_Filepaths.Models;
 using Genarate_OldVsNew_Filepaths.Services;
 using Xunit;
@@ -838,5 +839,289 @@ public class ServicesTests
         var processor = new Services.Genarate_OldVsNew_Filepaths();
 
         await processor.ProcessAsync(inputFile, config, logger, new Progress<string>(_ => { }), CancellationToken.None);
+    }
+
+    [Fact]
+    public void XmlConfigService_LoadsNewFilePathColumnAndInsertAfterColumn()
+    {
+        var xmlConfigService = new XmlConfigService();
+        string configPath = Path.GetFullPath(@"..\..\..\..\Genarate_OldVsNew_Filepaths.xml");
+        var config = xmlConfigService.LoadConfig(configPath);
+
+        Assert.Equal("NewFilePath", config.Columns.NewFilePathColumn);
+        Assert.Equal("OldPath", config.Columns.InsertAfterColumn);
+    }
+
+    [Fact]
+    public void TableExportService_DetermineColumnOrder_InsertsCorrectly()
+    {
+        var exporter = new TableExportService();
+        var dt = new DataTable();
+        dt.Columns.Add("OldPath");
+        dt.Columns.Add("ItemName");
+        dt.Columns.Add("Revision");
+        dt.Columns.Add("FileName");
+        dt.Columns.Add("Extension");
+
+        // Insert after OldPath
+        var cols1 = exporter.DetermineColumnOrder(dt, "NewFilePath", "OldPath");
+        Assert.Equal(new[] { "OldPath", "NewFilePath", "ItemName", "Revision", "FileName", "Extension" }, cols1);
+
+        // Insert after Revision
+        var cols2 = exporter.DetermineColumnOrder(dt, "NewFilePath", "Revision");
+        Assert.Equal(new[] { "OldPath", "ItemName", "Revision", "NewFilePath", "FileName", "Extension" }, cols2);
+
+        // Insert after non-existent column -> appends to end
+        var cols3 = exporter.DetermineColumnOrder(dt, "NewFilePath", "NonExistentColumn");
+        Assert.Equal(new[] { "OldPath", "ItemName", "Revision", "FileName", "Extension", "NewFilePath" }, cols3);
+
+        // No insertAfter -> appends to end
+        var cols4 = exporter.DetermineColumnOrder(dt, "NewFilePath", null);
+        Assert.Equal(new[] { "OldPath", "ItemName", "Revision", "FileName", "Extension", "NewFilePath" }, cols4);
+    }
+
+    [Fact]
+    public async Task ProcessAsync_GeneratesUpdatedCsv_WithNewFilePathInsertedAfterOldPath()
+    {
+        string tempDir = Path.Combine(Path.GetTempPath(), "UpdatedCsvTest_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDir);
+
+        string inputFile = Path.Combine(tempDir, "input_for_update.csv");
+        string csv = "OldPath,ItemName,Revision,FileName,Extension,DataSource\n" +
+            "D:\\Old\\file1.sldprt,ITEM_001,0,file1,sldprt,SW-SolidWorks\n" +
+            "D:\\Old\\file2.sldasm,ITEM_002,A,file2,sldasm,SW-SolidWorks\n";
+        await File.WriteAllTextAsync(inputFile, csv);
+
+        var config = new AppConfig
+        {
+            OutputFileName = "Output.txt",
+            UpdatedInputFileName = "Custom_Updated_Input.csv",
+            Delimiter = "|",
+            TargetRootFolder = @"E:\Target\Vault",
+            Columns = new ColumnMapping
+            {
+                OldPathColumn = "OldPath",
+                ItemFolderColumn = "ItemName",
+                RevisionColumn = "Revision",
+                FileNameColumn = "FileName",
+                ExtensionColumn = "Extension",
+                DataSourceColumn = "DataSource",
+                NewFilePathColumn = "TargetFilePath",
+                InsertAfterColumn = "OldPath"
+            }
+        };
+
+        var logger = new LoggerService();
+        logger.Initialize(inputFile);
+        var processor = new Services.Genarate_OldVsNew_Filepaths();
+
+        int count = await processor.ProcessAsync(inputFile, config, logger, new Progress<string>(_ => { }), CancellationToken.None);
+
+        Assert.Equal(2, count);
+
+        // Verify primary Output.txt
+        string outPath = Path.Combine(tempDir, "Output.txt");
+        Assert.True(File.Exists(outPath));
+
+        // Verify Custom_Updated_Input.csv
+        string updatedFile = Path.Combine(tempDir, "Custom_Updated_Input.csv");
+        Assert.True(File.Exists(updatedFile));
+
+        string[] lines = await File.ReadAllLinesAsync(updatedFile);
+        Assert.Equal(3, lines.Length);
+        Assert.Equal("OldPath,TargetFilePath,ItemName,Revision,FileName,Extension,DataSource", lines[0]);
+        Assert.Equal(@"D:\Old\file1.sldprt,E:\Target\Vault\ITEM_001\0\file1.sldprt,ITEM_001,0,file1,sldprt,SW-SolidWorks", lines[1]);
+        Assert.Equal(@"D:\Old\file2.sldasm,E:\Target\Vault\ITEM_002\A\file2.sldasm,ITEM_002,A,file2,sldasm,SW-SolidWorks", lines[2]);
+
+        Directory.Delete(tempDir, true);
+    }
+
+    [Fact]
+    public async Task ProcessAsync_GeneratesUpdatedCsv_WithNewFilePathAppendedAtEnd()
+    {
+        string tempDir = Path.Combine(Path.GetTempPath(), "UpdatedCsvEndTest_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDir);
+
+        string inputFile = Path.Combine(tempDir, "data.csv");
+        string csv = "OldPath,ItemName,Revision,FileName,Extension\n" +
+            "D:\\Old\\doc.pdf,FOLDER1,0,doc,pdf\n";
+        await File.WriteAllTextAsync(inputFile, csv);
+
+        var config = new AppConfig
+        {
+            OutputFileName = "Output.txt",
+            Delimiter = "|",
+            TargetRootFolder = @"C:\Vault",
+            Columns = new ColumnMapping
+            {
+                OldPathColumn = "OldPath",
+                ItemFolderColumn = "ItemName",
+                RevisionColumn = "Revision",
+                FileNameColumn = "FileName",
+                ExtensionColumn = "Extension",
+                NewFilePathColumn = "CalculatedNewPath",
+                InsertAfterColumn = null // Should append at end
+            }
+        };
+
+        var logger = new LoggerService();
+        logger.Initialize(inputFile);
+        var processor = new Services.Genarate_OldVsNew_Filepaths();
+
+        int count = await processor.ProcessAsync(inputFile, config, logger, new Progress<string>(_ => { }), CancellationToken.None);
+        Assert.Equal(1, count);
+
+        // Default naming: data_Updated.csv
+        string defaultUpdatedFile = Path.Combine(tempDir, "data_Updated.csv");
+        Assert.True(File.Exists(defaultUpdatedFile));
+
+        string[] lines = await File.ReadAllLinesAsync(defaultUpdatedFile);
+        Assert.Equal("OldPath,ItemName,Revision,FileName,Extension,CalculatedNewPath", lines[0]);
+        Assert.Equal(@"D:\Old\doc.pdf,FOLDER1,0,doc,pdf,C:\Vault\FOLDER1\0\doc.pdf", lines[1]);
+
+        Directory.Delete(tempDir, true);
+    }
+
+    [Fact]
+    public async Task ProcessAsync_GeneratesUpdatedXlsx_WithNewFilePathInsertedAfterFileName()
+    {
+        string tempDir = Path.Combine(Path.GetTempPath(), "UpdatedXlsxTest_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDir);
+
+        string inputFile = Path.Combine(tempDir, "parts.xlsx");
+        using (var wb = new ClosedXML.Excel.XLWorkbook())
+        {
+            var ws = wb.Worksheets.Add("PartsData");
+            ws.Cell(1, 1).Value = "OldPath";
+            ws.Cell(1, 2).Value = "ItemName";
+            ws.Cell(1, 3).Value = "Revision";
+            ws.Cell(1, 4).Value = "FileName";
+            ws.Cell(1, 5).Value = "Extension";
+
+            ws.Cell(2, 1).Value = @"D:\Old\part1.prt";
+            ws.Cell(2, 2).Value = "PART-100";
+            ws.Cell(2, 3).Value = "01";
+            ws.Cell(2, 4).Value = "part1";
+            ws.Cell(2, 5).Value = "prt";
+
+            wb.SaveAs(inputFile);
+        }
+
+        var config = new AppConfig
+        {
+            OutputFileName = "Output.txt",
+            Delimiter = "|",
+            ExcelSheetName = "PartsData",
+            TargetRootFolder = @"E:\Teamcenter\Storage",
+            Columns = new ColumnMapping
+            {
+                OldPathColumn = "OldPath",
+                ItemFolderColumn = "ItemName",
+                RevisionColumn = "Revision",
+                FileNameColumn = "FileName",
+                ExtensionColumn = "Extension",
+                NewFilePathColumn = "TargetFilePath",
+                InsertAfterColumn = "FileName"
+            }
+        };
+
+        var logger = new LoggerService();
+        logger.Initialize(inputFile);
+        var processor = new Services.Genarate_OldVsNew_Filepaths();
+
+        int count = await processor.ProcessAsync(inputFile, config, logger, new Progress<string>(_ => { }), CancellationToken.None);
+        Assert.Equal(1, count);
+
+        // Expected updated file: parts_Updated.xlsx
+        string updatedFile = Path.Combine(tempDir, "parts_Updated.xlsx");
+        Assert.True(File.Exists(updatedFile));
+
+        // Read back with ClosedXML to verify Excel structure
+        using (var updatedWb = new ClosedXML.Excel.XLWorkbook(updatedFile))
+        {
+            Assert.True(updatedWb.Worksheets.Contains("PartsData"));
+            var ws = updatedWb.Worksheet("PartsData");
+
+            // Columns should be: OldPath (1), ItemName (2), Revision (3), FileName (4), TargetFilePath (5), Extension (6)
+            Assert.Equal("OldPath", ws.Cell(1, 1).GetString());
+            Assert.Equal("ItemName", ws.Cell(1, 2).GetString());
+            Assert.Equal("Revision", ws.Cell(1, 3).GetString());
+            Assert.Equal("FileName", ws.Cell(1, 4).GetString());
+            Assert.Equal("TargetFilePath", ws.Cell(1, 5).GetString());
+            Assert.Equal("Extension", ws.Cell(1, 6).GetString());
+
+            // Row 2 values
+            Assert.Equal(@"D:\Old\part1.prt", ws.Cell(2, 1).GetString());
+            Assert.Equal("PART-100", ws.Cell(2, 2).GetString());
+            Assert.Equal("01", ws.Cell(2, 3).GetString());
+            Assert.Equal("part1", ws.Cell(2, 4).GetString());
+            Assert.Equal(@"E:\Teamcenter\Storage\PART-100\01\part1.prt", ws.Cell(2, 5).GetString());
+            Assert.Equal("prt", ws.Cell(2, 6).GetString());
+        }
+
+        Directory.Delete(tempDir, true);
+    }
+
+    [Fact]
+    public async Task ProcessAsync_UpdatedFile_PreservesSkippedAndFailedRowsWithBlankNewFilePath()
+    {
+        string tempDir = Path.Combine(Path.GetTempPath(), "PreserveRowsTest_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDir);
+
+        string inputFile = Path.Combine(tempDir, "mixed_input.csv");
+        // Row 1: Valid SW
+        // Row 2: Filtered out (ACAD)
+        // Row 3: Missing FileName (Failed)
+        string csv = "OldPath,ItemName,Revision,FileName,Extension,DataSource\n" +
+            "D:\\Old\\file1.sldprt,ITEM_1,0,file1,sldprt,SW-SolidWorks\n" +
+            "D:\\Old\\file2.dwg,ITEM_2,A,file2,dwg,ACAD-AutoCAD\n" +
+            "D:\\Old\\file3.sldprt,ITEM_3,B,,sldprt,SW-SolidWorks\n";
+        await File.WriteAllTextAsync(inputFile, csv);
+
+        var config = new AppConfig
+        {
+            OutputFileName = "Output.txt",
+            Delimiter = "|",
+            TargetRootFolder = @"C:\Vault",
+            DataSourceFilter = "SW-SolidWorks",
+            Columns = new ColumnMapping
+            {
+                OldPathColumn = "OldPath",
+                ItemFolderColumn = "ItemName",
+                RevisionColumn = "Revision",
+                FileNameColumn = "FileName",
+                ExtensionColumn = "Extension",
+                DataSourceColumn = "DataSource",
+                NewFilePathColumn = "NewPath",
+                InsertAfterColumn = "OldPath"
+            }
+        };
+
+        var logger = new LoggerService();
+        logger.Initialize(inputFile);
+        var processor = new Services.Genarate_OldVsNew_Filepaths();
+
+        int count = await processor.ProcessAsync(inputFile, config, logger, new Progress<string>(_ => { }), CancellationToken.None);
+        Assert.Equal(1, count); // Only 1 success
+
+        string updatedFile = Path.Combine(tempDir, "mixed_input_Updated.csv");
+        Assert.True(File.Exists(updatedFile));
+
+        string[] lines = await File.ReadAllLinesAsync(updatedFile);
+        Assert.Equal(4, lines.Length); // Header + 3 rows
+
+        // Header
+        Assert.Equal("OldPath,NewPath,ItemName,Revision,FileName,Extension,DataSource", lines[0]);
+
+        // Row 1: Success has NewPath filled in
+        Assert.Equal(@"D:\Old\file1.sldprt,C:\Vault\ITEM_1\0\file1.sldprt,ITEM_1,0,file1,sldprt,SW-SolidWorks", lines[1]);
+
+        // Row 2: Skipped (ACAD) preserves original data, NewPath is empty
+        Assert.Equal("D:\\Old\\file2.dwg,,ITEM_2,A,file2,dwg,ACAD-AutoCAD", lines[2]);
+
+        // Row 3: Failed (Missing FileName) preserves original data, NewPath is empty
+        Assert.Equal("D:\\Old\\file3.sldprt,,ITEM_3,B,,sldprt,SW-SolidWorks", lines[3]);
+
+        Directory.Delete(tempDir, true);
     }
 }

@@ -1,0 +1,14 @@
+﻿================================================================================
+  FAILED LOG: Genarate_OldVsNew_Filepaths
+  Start Time : 2026-09-10 15:39:51
+  Input File : C:\Project\Genarate_OldVsNew_Filepaths\Sample_Input.xlsx
+================================================================================
+================================================================================
+  EXECUTION SUMMARY: SUCCESS
+  Total Input Rows : 10
+  Success (Written): 6
+  Failed (Missing) : 0
+  Skipped (Filter) : 4
+  Elapsed Time     : 1.10s (00:00:01.1000334)
+  End Time         : 2026-09-10 15:39:52
+================================================================================

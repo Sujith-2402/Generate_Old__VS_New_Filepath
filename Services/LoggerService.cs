@@ -21,7 +21,7 @@ public class LoggerService
         FailedLogFilePath = Path.Combine(logsDir, $"Failed_Log_{timestamp}.txt");
     }
 
-    public void LogHeader(string inputFile, AppConfig config)
+    public void LogHeader(string inputFile, AppConfig config, string? updatedInputFilePath = null)
     {
         var sb = new StringBuilder();
         sb.AppendLine("================================================================================");
@@ -29,6 +29,10 @@ public class LoggerService
         sb.AppendLine($"  Start Time : {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
         sb.AppendLine($"  Input File : {inputFile}");
         sb.AppendLine($"  Output File: {config.OutputFileName}");
+        if (!string.IsNullOrWhiteSpace(updatedInputFilePath))
+        {
+            sb.AppendLine($"  Updated File: {Path.GetFileName(updatedInputFilePath)}");
+        }
         sb.AppendLine($"  Target Base: {config.TargetRootFolder}");
         sb.AppendLine($"  Delimiter  : {config.Delimiter}");
         sb.AppendLine($"  DataSource : {config.DataSourceFilter ?? "None (All Rows)"}");
